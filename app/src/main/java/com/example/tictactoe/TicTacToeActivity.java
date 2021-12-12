@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Random;
 
@@ -35,6 +37,8 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
     private TextView res1;
     private TextView res2;
     private boolean is_player_turn;
+    private ToggleButton is_AI_Button;
+    private boolean is_AI_Bool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,24 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         result1 = (TextView) findViewById(R.id.result1);
         result2 = (TextView) findViewById(R.id.result2);
         welcome = (TextView) findViewById(R.id.welcome);
+        is_AI_Button = (ToggleButton) findViewById(R.id.toggleButton);
+
+
+        is_AI_Button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    is_AI_Bool=true;
+                    game.toggle_AI_mode();
+                } else {
+                    // The toggle is disabled
+                    is_AI_Bool=false;
+                    game.toggle_AI_mode();
+                }
+            }
+        });
+
+
 
         for(int i=0;i<9;i++)
             buttons[i].setOnClickListener(this);
@@ -120,7 +142,7 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void player_turn(int row, int col, int i) { //it is how the game will be conducted
-        if(game.check_if_game_over()==true)
+        if(game.is_fully()==true)
             return;
         if(is_player_turn==false)
             return;
@@ -166,7 +188,7 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         if(is_player_turn==true)
             return;
         int i = game.setO();
-        if (i != -1 && game.check_if_game_over()==false) {
+        if (i != -1 && game.is_fully()==false) {
             buttons[i].setText("o");
             check_if_game_finish(2);
             is_player_turn=true;
@@ -227,6 +249,7 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         }
         reset_board.setVisibility(View.VISIBLE);
         reset_game.setVisibility(View.VISIBLE);
+        is_AI_Button.setVisibility(View.VISIBLE);
 
         result1.setText(playername);
         result2.setText("Computer");

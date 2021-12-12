@@ -7,6 +7,7 @@ class TicTacToeGame {
     private int sum;
     private int result[];
     private final int size=3;
+    private boolean isAI;
 
     public int getXwins(){
         return result[0];
@@ -15,16 +16,22 @@ class TicTacToeGame {
         return result[1];
     }
 
+
     public TicTacToeGame(){
         board=new char[size][size];
         sum=0;
         result=new int[2];
+        this.isAI=false;
     }
     public void newGame() {
         for(int i=0;i<size;i++)
             for(int j=0;j<size;j++)
                 board[i][j]=0;
         sum=0;
+    }
+
+    public void toggle_AI_mode(){
+        isAI=!isAI;
     }
 
     public void reset_results(){
@@ -36,7 +43,7 @@ class TicTacToeGame {
         sum=9;
     }
 
-    public boolean check_if_game_over(){
+    public boolean is_fully(){
         if(sum==9)
             return true;
         return false;
@@ -56,19 +63,37 @@ class TicTacToeGame {
         return false;
     }
 
-    public int setO()
+    public int setO(){
+        int[] return_val;
+        if(this.isAI==true)
+            return_val = setOAI();
+        else
+            return_val = setORegular();
+
+        if(return_val==null)
+            return -1;
+
+        board[return_val[0]][return_val[1]] = 'o';
+        sum++;
+        return (return_val[1] + (return_val[0]*size));
+    }
+
+    private int[] setORegular()
     {
         if(sum!=9) {
-            double rowTemp, colTemp;
+            int rowTemp, colTemp;
             do {
-                rowTemp = Math.random() * size;
-                colTemp = Math.random() * size;
-            } while (isEmpty((int) rowTemp, (int) colTemp) == false);
-            board[(int) rowTemp][(int) colTemp] = 'o';
-            sum++;
-            return ((int)colTemp + ((int)rowTemp*size));
+                rowTemp = (int)(Math.random() * size);
+                colTemp = (int)(Math.random() * size);
+            } while (isEmpty(rowTemp, colTemp) == false);
+
+            return new int[] {rowTemp,colTemp};
         }
-        return -1;
+        return null;
+    }
+
+    private int[] setOAI(){
+        return null;
     }
 
     public int checkifwin(int user){
@@ -79,7 +104,7 @@ class TicTacToeGame {
 
         boolean check = ifWinhelper();
         if(check==false){//no one win
-            if(check_if_game_over())//draw
+            if(is_fully())//draw
                 return 0;
             else//continue to play
                 return -1;
