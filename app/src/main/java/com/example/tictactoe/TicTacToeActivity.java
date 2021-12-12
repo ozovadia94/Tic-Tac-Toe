@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 
 public class TicTacToeActivity extends AppCompatActivity implements View.OnClickListener {
     private Button[] buttons = new Button[9];
@@ -32,6 +34,7 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
     private TextView result2;
     private TextView res1;
     private TextView res2;
+    private boolean is_player_turn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,39 +90,47 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
                 app_exit();
                 break;
             case R.id.a1:
-                move(0, 0, 0);
+                player_turn(0, 0, 0);
                 break;
             case R.id.a2:
-                move(0, 1, 1);
+                player_turn(0, 1, 1);
                 break;
             case R.id.a3:
-                move(0, 2, 2);
+                player_turn(0, 2, 2);
                 break;
             case R.id.b1:
-                move(1, 0, 3);
+                player_turn(1, 0, 3);
                 break;
             case R.id.b2:
-                move(1, 1, 4);
+                player_turn(1, 1, 4);
                 break;
             case R.id.b3:
-                move(1, 2, 5);
+                player_turn(1, 2, 5);
                 break;
             case R.id.c1:
-                move(2, 0, 6);
+                player_turn(2, 0, 6);
                 break;
             case R.id.c2:
-                move(2, 1, 7);
+                player_turn(2, 1, 7);
                 break;
             case R.id.c3:
-                move(2, 2, 8);
+                player_turn(2, 2, 8);
                 break;
         }
     }
 
-    private void move(int row, int col, int i) { //it is how the game will be conducted
+    private void player_turn(int row, int col, int i) { //it is how the game will be conducted
+        if(game.check_if_game_over()==true)
+            return;
+        if(is_player_turn==false)
+            return;
+
         if (game.isEmpty(row,col)) {//when a button wasn't pressed
             buttons[i].setText("x");
             game.setX(row, col);
+            is_player_turn=false;
+
+
 
             if (check_if_game_finish(1)==false) {
                 computer_turn();
@@ -135,7 +146,6 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
             case 0:
                 Toast.makeText(this, "Draw - 'Teko'", Toast.LENGTH_LONG).show();
                 game.finish_game();
-
                 break;
             case 1:
                 Toast.makeText(this, playername + " Win", Toast.LENGTH_LONG).show();
@@ -151,11 +161,15 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         return true;
     }
 
+
     private void computer_turn() {
+        if(is_player_turn==true)
+            return;
         int i = game.setO();
         if (i != -1 && game.check_if_game_over()==false) {
             buttons[i].setText("o");
             check_if_game_finish(2);
+            is_player_turn=true;
         }
     }
 
@@ -163,6 +177,10 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         game.newGame();
         for (int i = 0; i < 9; i++)
             buttons[i].setText("");
+
+        is_player_turn=getRandomBoolean();
+        if(is_player_turn==false)
+            computer_turn();
     }
 
     private void reset_game() {
@@ -214,6 +232,8 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
         result2.setText("Computer");
         update_results();
 
+        reset_board();
+
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(),0);
     }
@@ -241,5 +261,10 @@ public class TicTacToeActivity extends AppCompatActivity implements View.OnClick
 
         AlertDialog alert = altdial.create();
         alert.show();
+    }
+
+    public boolean getRandomBoolean() {
+        Random random = new Random();
+        return random.nextBoolean();
     }
 }

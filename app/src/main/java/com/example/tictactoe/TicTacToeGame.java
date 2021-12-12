@@ -51,10 +51,11 @@ class TicTacToeGame {
     }
 
     public boolean isEmpty(int row,int col){ //check if the place is
-        if(board[row][col]==0 && check_if_game_over()==false)
+        if(board[row][col]==0)
             return true;
         return false;
     }
+
     public int setO()
     {
         if(sum!=9) {
